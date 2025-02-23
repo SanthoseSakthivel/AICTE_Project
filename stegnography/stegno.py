@@ -7,7 +7,7 @@ def encode_message(image_path, secret_message, output_path):
         print("Error: Image not found!")
         return
 
-    secret_message += "####"  # Delimiter to mark the end of the message
+    secret_message += "####"  # End delimiter
     message_bin = ''.join(format(ord(char), '08b') for char in secret_message)
     index = 0
 
@@ -33,9 +33,15 @@ def decode_message(image_path):
             for color in range(3):
                 message_bin += str(pixel[color] & 1)
 
-    message = ''.join(chr(int(message_bin[i:i+8], 2)) for i in range(0, len(message_bin), 8))
-    extracted_message = message.split("####")[0]  # Stop at the delimiter
+    # Convert binary to string
+    message = ""
+    for i in range(0, len(message_bin), 8):
+        char = chr(int(message_bin[i:i+8], 2))
+        message += char
+        if message.endswith("####"):  # Stop at delimiter
+            break
 
+    extracted_message = message.replace("####", "")
     print(f"Decoded message: {extracted_message}")
 
 # User Input
